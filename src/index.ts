@@ -6,8 +6,10 @@ function statement(invoice, plays) {
         customer: invoice.customer,
         performances: invoice.performances.map(enrichPerformance),
         totalAmount: 0,
+        totalVolumeCredits: 0,
     };
     statementData.totalAmount = totalAmount(statementData)
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
     return renderPlainText(statementData)
 
     function enrichPerformance(aPerformance) {
@@ -26,6 +28,14 @@ function statement(invoice, plays) {
         let result = 0;
         for (let perf of data.performances) {
             result += perf.amount;
+        }
+        return result;
+    }
+
+    function totalVolumeCredits(data) {
+        let result = 0;
+        for (let perf of data.performances) {
+            result += perf.volumneCredits;
         }
         return result;
     }
@@ -71,18 +81,8 @@ function statement(invoice, plays) {
         }
 
         result += `총액 : ${usd(data.totalAmount)}\n`;
-        result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+        result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
         return result;
-
-        function totalVolumeCredits() {
-            let result = 0;
-            for (let perf of data.performances) {
-                result += perf.volumneCredits;
-            }
-            return result;
-        }
-
-
 
 
     }
