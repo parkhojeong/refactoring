@@ -4,8 +4,10 @@ import plays from "./plays";
 function statement(invoice, plays) {
     const statementData = {
         customer: invoice.customer,
-        performances: invoice.performances.map(enrichPerformance)
+        performances: invoice.performances.map(enrichPerformance),
+        totalAmount: 0,
     };
+    statementData.totalAmount = totalAmount(statementData)
     return renderPlainText(statementData)
 
     function enrichPerformance(aPerformance) {
@@ -18,6 +20,14 @@ function statement(invoice, plays) {
 
     function playFor(aPerformance) {
         return plays[aPerformance.playId]
+    }
+
+    function totalAmount(data) {
+        let result = 0;
+        for (let perf of data.performances) {
+            result += perf.amount;
+        }
+        return result;
     }
 
     function volumeCreditsFor(aPerformance) {
@@ -60,17 +70,9 @@ function statement(invoice, plays) {
             result += `${perf.play.name}: ${usd(perf.amount)} (${perf.audience}석)\n`;
         }
 
-        result += `총액 : ${usd(totalAmount())}\n`;
+        result += `총액 : ${usd(data.totalAmount)}\n`;
         result += `적립 포인트: ${totalVolumeCredits()}점\n`;
         return result;
-
-        function totalAmount() {
-            let result = 0;
-            for (let perf of data.performances) {
-                result += perf.amount;
-            }
-            return result;
-        }
 
         function totalVolumeCredits() {
             let result = 0;
