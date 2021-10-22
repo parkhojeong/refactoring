@@ -2,17 +2,21 @@ import invoices from "./invoices";
 import plays from "./plays";
 
 function statement(invoice, plays) {
-    let result = `청구 내역 (고객명 ${invoice.customer}\n`;
+    return renderPlainText(invoice, plays)
 
-    for (let perf of invoice.performances) {
-        result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
+    function renderPlainText(invoice, plays) {
+        let result = `청구 내역 (고객명 ${invoice.customer}\n`;
+
+        for (let perf of invoice.performances) {
+            result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
+        }
+
+        result += `총액 : ${usd(totalAmount())}\n`;
+        result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+        return result;
     }
 
-    result += `총액 : ${usd(totalAmount())}\n`;
-    result += `적립 포인트: ${totalVolumeCredits()}점\n`;
-    return result;
-
-    function totalAmount(){
+    function totalAmount() {
         let result = 0;
         for (let perf of invoice.performances) {
             result += amountFor(perf);
@@ -20,7 +24,7 @@ function statement(invoice, plays) {
         return result;
     }
 
-    function totalVolumeCredits(){
+    function totalVolumeCredits() {
         let result = 0;
         for (let perf of invoice.performances) {
             result += volumeCreditsFor(perf);
