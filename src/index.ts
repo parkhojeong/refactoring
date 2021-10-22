@@ -2,27 +2,32 @@ import invoices from "./invoices";
 import plays from "./plays";
 
 function statement(invoice, plays) {
-    const statementData = {
-        customer: invoice.customer,
-        performances: invoice.performances.map(enrichPerformance),
-        totalAmount: 0,
-        totalVolumeCredits: 0,
-    };
-    statementData.totalAmount = totalAmount(statementData)
-    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-    return renderPlainText(statementData)
+    return renderPlainText(createStatementData(invoice, plays))
 
-    function enrichPerformance(aPerformance) {
-        const result = Object.assign({}, aPerformance);
-        result.play = playFor(result);
-        result.amount = amountFor(result);
-        result.volumneCredits = volumeCreditsFor(result);
-        return result;
+    function createStatementData(invoice, plays){
+        const statementData = {
+            customer: invoice.customer,
+            performances: invoice.performances.map(enrichPerformance),
+            totalAmount: 0,
+            totalVolumeCredits: 0,
+        };
+        statementData.totalAmount = totalAmount(statementData)
+        statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+        return statementData
+
+        function enrichPerformance(aPerformance) {
+            const result = Object.assign({}, aPerformance);
+            result.play = playFor(result);
+            result.amount = amountFor(result);
+            result.volumneCredits = volumeCreditsFor(result);
+            return result;
+        }
+
+        function playFor(aPerformance) {
+            return plays[aPerformance.playId]
+        }
     }
 
-    function playFor(aPerformance) {
-        return plays[aPerformance.playId]
-    }
 
     function totalAmount(data) {
         return data.performances.reduce((total, p)=> total + p.amount , 0);
