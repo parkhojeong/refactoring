@@ -6,7 +6,7 @@ function statement(invoice, plays) {
         customer: invoice.customer,
         performances: invoice.performances.map(enrichPerformance)
     };
-    return renderPlainText(statementData, plays)
+    return renderPlainText(statementData)
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
